@@ -96,6 +96,10 @@ export class ChoresComponent implements OnInit, DoCheck {
     this.chores.splice(index, 1)
   }
 
+  isValidEffortInput(form) {
+    return form.Effort > 0 && form.Effort < 6
+  }
+
   resetChores() {
     this.people.forEach(person => {
       person.chores.forEach(chore => {
