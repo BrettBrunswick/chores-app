@@ -4,15 +4,15 @@
     <hr class="my-4">
     <div class="row">
       <div class="col-md-4">
-        <form class="form-inline"> 
+        <form class="form-inline" #newPersonForm="ngForm" (ngSubmit)="addPerson(newPersonForm)"> 
           <label class="sr-only" for="name">Name</label>
           <div class="input-group mr-sm-2">
             <div class="input-group-prepend">
               <div class="input-group-text">Person</div>
             </div>
-            <input type="text" class="form-control" id="name" [readonly]="showResults">
+            <input type="text" class="form-control" id="name" [readonly]="showResults" #PersonName="ngModel"  [(ngModel)]="newPersonName" [ngModelOptions]="{standalone: true}" required>
           </div>
-          <button type="submit" class="btn btn-primary" [disabled]="showResults">Add</button>
+          <button type="submit" class="btn btn-primary" [disabled]="showResults || newPersonForm.invalid">Add</button>
         </form>
       </div>
       <div class="col-md-6">
@@ -25,7 +25,7 @@
             <input type="text" class="form-control" id="title" [readonly]="showResults">
           </div>
           <label class="sr-only" for="effort">Effort</label>
-          <div class="input-group mr-sm-2 col-md-3">
+          <div class="input-group col-md-3">
             <div class="input-group-prepend">
               <div class="input-group-text">Effort</div>
             </div>
@@ -71,16 +71,16 @@
       <h1>{{person.name}}</h1>
       <ul class="list-group">
         <li *ngFor="let chore of person.chores" class="list-group-item d-flex justify-content-between align-items-center">
-          <span class="chore-title">{{chore.title}}</span>
+          <span [className]="chore.completed ? 'chore-title line-through' : 'chore-title'">{{chore.title}}</span>
           <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="completed-chore-{{chore.id}}" (change)="clickedCheck($event, person.id, chore.id)">
             <label class="custom-control-label" for="completed-chore-{{chore.id}}">Completed?</label>
           </div>
           <span class="badge badge-primary badge-pill">{{chore.effort}}</span>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span class="chore-title">Total Effort</span>
-          <span class="badge badge-primary badge-pill">{{totalEffortForPerson(person)}}</span>
+        <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-secondary">
+          <span class="chore-title">Effort Remaining</span>
+          <span class="badge badge-primary badge-pill">{{effortRemaining(person)}}</span>
         </li>
       </ul>
       <div class="progress">

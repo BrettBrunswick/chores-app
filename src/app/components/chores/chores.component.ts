@@ -1,6 +1,7 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { Chore } from '../../interfaces/chore';
 import { Person } from '../../interfaces/person';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-chores',
@@ -12,6 +13,8 @@ export class ChoresComponent implements OnInit, OnChanges {
   chores: Chore[] = [];
   people: Person[] = [];
   showResults = false;
+
+  newPersonName: string;
 
   constructor() { }
 
@@ -88,7 +91,17 @@ export class ChoresComponent implements OnInit, OnChanges {
     ]
   }
 
-  addPerson(person: Person) {
+  addPerson(form?: NgForm) {
+    console.log(form.value)
+    let person: Person = 
+    {
+      name: form.value.PersonName,
+      id:  this.people.map(id => id.id).reduce((prev, next) => prev + next) + 1,
+      chores: [],
+      effortCompleted: 0
+    }
+    console.log(person)
+    console.log(this.people)
     this.people.push(person);
   }
 
@@ -109,13 +122,11 @@ export class ChoresComponent implements OnInit, OnChanges {
 
   randomlyAssignChores () {
     let tempChores = this.shuffle(this.chores);
-    let totalEffort = this.chores.map(ef => ef.effort).reduce((prev, next) => prev + next);
     
-    while (totalEffort > 0 && tempChores.length > 0) {
+    while (tempChores.length > 0) {
         let indexOfMinEffort = this.indexOfPersonWithMinEffort(this.people);
         let choreToAssign = tempChores.pop()
         this.people[indexOfMinEffort].chores.push(choreToAssign);
-        totalEffort -= choreToAssign.effort;
     }
     this.showResults = true;
   }
@@ -124,19 +135,24 @@ export class ChoresComponent implements OnInit, OnChanges {
     let person = this.people.filter(pers => pers.id == personId).pop();
     let chore = person.chores.filter(chr => chr.id == choreId).pop();
 
-    if(e.target.checked){
+    if(e.target.checked) {
       chore.completed = true;
     } else {
       chore.completed = false;
     }
     person.effortCompleted = this.percentEffortCompletedByPerson(person);
-  }
-
+  } 
 
   percentEffortCompletedByPerson(person: Person) {
     let totalEffort = this.totalEffortForPerson(person);
     let completedEffort = this.effortCompletedForPerson(person);
     return (completedEffort/totalEffort) * 100;
+  }
+
+  effortRemaining(person: Person) {
+    let totalEffort = this.totalEffortForPerson(person);
+    let completedEffort = this.effortCompletedForPerson(person);
+    return totalEffort - completedEffort;
   }
 
   private indexOfPersonWithMinEffort(arr: Person[]) {
