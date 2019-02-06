@@ -10,9 +10,9 @@
             <div class="input-group-prepend">
               <div class="input-group-text">Person</div>
             </div>
-            <input type="text" class="form-control" id="name">
+            <input type="text" class="form-control" id="name" [readonly]="showResults">
           </div>
-          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="submit" class="btn btn-primary" [disabled]="showResults">Add</button>
         </form>
       </div>
       <div class="col-md-6">
@@ -22,20 +22,21 @@
             <div class="input-group-prepend">
               <div class="input-group-text">Chore</div>
             </div>
-            <input type="text" class="form-control" id="title">
+            <input type="text" class="form-control" id="title" [readonly]="showResults">
           </div>
           <label class="sr-only" for="effort">Effort</label>
           <div class="input-group mr-sm-2 col-md-3">
             <div class="input-group-prepend">
               <div class="input-group-text">Effort</div>
             </div>
-            <input type="number" class="form-control" id="effort">
+            <input type="number" class="form-control" id="effort" [readonly]="showResults">
           </div>
-          <button type="submit" class="btn btn-primary">Add</button>
+          <button type="submit" class="btn btn-primary" [disabled]="showResults">Add</button>
         </form>
       </div>
-      <div class="col-md-2">
-        <button class="btn btn-block btn-secondary" (click)="randomlyAssignChores()">Randomize</button>
+      <div class="col-md-2 btn-group">
+        <button class="btn btn-warning" (click)="resetChores()" [disabled]="!showResults">Reset</button>
+        <button class="btn btn-success" (click)="randomlyAssignChores()" [disabled]="showResults">Randomize</button>
       </div>
     </div>
 </div>
@@ -53,14 +54,10 @@
     </div>
 
     <div class="col-md-6 p-4">
-      <h1>Chores</h1>
+      <h1>All Chores</h1>
       <ul class="list-group">
         <li *ngFor="let chore of chores" class="list-group-item d-flex justify-content-between align-items-center">
           <span class="chore-title">{{chore.title}}</span>
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="completed-chore-{{chore.id}}" checked="">
-            <label class="custom-control-label" for="completed-chore-{{chore.id}}">Completed?</label>
-          </div>
           <span class="badge badge-primary badge-pill">{{chore.effort}}</span>
         </li>
       </ul>
@@ -73,21 +70,21 @@
     <div *ngFor="let person of people" class="col-md-6 p-4">
       <h1>{{person.name}}</h1>
       <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Cras justo odio
-          <span class="badge badge-primary badge-pill">14</span>
+        <li *ngFor="let chore of person.chores" class="list-group-item d-flex justify-content-between align-items-center">
+          <span class="chore-title">{{chore.title}}</span>
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="completed-chore-{{chore.id}}" (change)="clickedCheck($event, person.id, chore.id)">
+            <label class="custom-control-label" for="completed-chore-{{chore.id}}">Completed?</label>
+          </div>
+          <span class="badge badge-primary badge-pill">{{chore.effort}}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          Dapibus ac facilisis in
-          <span class="badge badge-primary badge-pill">2</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Morbi leo risus
-          <span class="badge badge-primary badge-pill">1</span>
+          <span class="chore-title">Total Effort</span>
+          <span class="badge badge-primary badge-pill">{{totalEffortForPerson(person)}}</span>
         </li>
       </ul>
       <div class="progress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" [style.width]="person.effortCompleted + '%'"></div>
         </div>
     </div>
 
