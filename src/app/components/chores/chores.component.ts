@@ -25,7 +25,7 @@ export class ChoresComponent implements OnInit, DoCheck {
   ngOnInit() {
     this.populatePeople();
     this.populateChores();
-    this.showResults = JSON.parse(localStorage.getItem('showResults'));
+    this.showResults = JSON.parse(localStorage.getItem('showResults')) != undefined ? JSON.parse(localStorage.getItem('showResults')) : false;
   }
 
   ngDoCheck() {
@@ -44,12 +44,12 @@ export class ChoresComponent implements OnInit, DoCheck {
   }
 
   populatePeople() {
-    this.people = JSON.parse(localStorage.getItem('people'));
+    this.people = JSON.parse(localStorage.getItem('people')) != undefined ? JSON.parse(localStorage.getItem('people')) : [];
     this.peopleSinceLastCheck = JSON.stringify(this.people);
   }
 
   populateChores() {
-    this.chores = JSON.parse(localStorage.getItem('chores'));
+    this.chores = JSON.parse(localStorage.getItem('chores')) != undefined ? JSON.parse(localStorage.getItem('chores')) : [];
     this.choresSinceLastCheck = JSON.stringify(this.chores);
   }
 
