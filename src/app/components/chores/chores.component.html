@@ -22,7 +22,7 @@
             <div class="input-group-prepend">
               <div class="input-group-text">Chore</div>
             </div>
-            <input type="text" class="form-control" id="title" [readonly]="showResults" name="ChoreName" ngModel required #ChoreName="ngModel">
+            <input type="text" class="form-control" id="title" [readonly]="showResults" name="ChoreName" ngModel required min="1" max="5" #ChoreName="ngModel">
           </div>
           <label class="sr-only" for="effort">Effort</label>
           <div class="input-group col-md-3">
@@ -36,7 +36,7 @@
       </div>
       <div class="col-md-2 btn-group">
         <button class="btn btn-warning" (click)="resetChores()" [disabled]="!showResults">Reset</button>
-        <button class="btn btn-success" (click)="randomlyAssignChores()" [disabled]="showResults">Randomize</button>
+        <button class="btn btn-success" (click)="randomlyAssignChores()" [disabled]="showResults || !chores.length > 0 || !people.length > 0">Randomize</button>
       </div>
     </div>
 </div>
@@ -48,7 +48,7 @@
       <h1>People</h1>
       <ul class="list-group">
         <li *ngFor="let person of people" class="list-group-item d-flex justify-content-between align-items-center">
-          <fa name="times" class="text-danger" (click)="deletePerson(person.id)"></fa>
+          <button class="btn" [disabled]="showResults" (click)="deletePerson(person.id)"><fa name="times" class="text-danger"></fa></button>
           <span class="all-people-person-name">{{person.name}}</span>
         </li>
       </ul>
@@ -58,7 +58,7 @@
       <h1>All Chores</h1>
       <ul class="list-group">
         <li *ngFor="let chore of chores" class="list-group-item d-flex justify-content-between align-items-center">
-          <fa name="times" class="text-danger" (click)="deleteChore(chore.id)"></fa>
+          <button class="btn" [disabled]="showResults" (click)="deleteChore(chore.id)"><fa name="times" class="text-danger"></fa></button>
           <span class="all-chores-chore-title">{{chore.title}}</span>
           <span class="badge badge-primary badge-pill">{{chore.effort}}</span>
         </li>
@@ -75,7 +75,7 @@
         <li *ngFor="let chore of person.chores" class="list-group-item d-flex justify-content-between align-items-center">
           <span [className]="chore.completed ? 'chore-title line-through' : 'chore-title'">{{chore.title}}</span>
           <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="completed-chore-{{chore.id}}" (change)="clickedCompleted($event, person.id, chore.id)">
+            <input type="checkbox" class="custom-control-input" id="completed-chore-{{chore.id}}" [checked]="chore.completed" (change)="clickedCompleted($event, person.id, chore.id)">
             <label class="custom-control-label" for="completed-chore-{{chore.id}}">Completed?</label>
           </div>
           <span class="badge badge-primary badge-pill">{{chore.effort}}</span>

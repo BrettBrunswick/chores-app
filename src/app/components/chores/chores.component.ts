@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { Chore } from '../../interfaces/chore';
 import { Person } from '../../interfaces/person';
 import { NgForm } from '@angular/forms';
@@ -8,87 +8,53 @@ import { NgForm } from '@angular/forms';
   templateUrl: './chores.component.html',
   styleUrls: ['./chores.component.sass']
 })
-export class ChoresComponent implements OnInit, OnChanges {
+export class ChoresComponent implements OnInit, DoCheck {
 
   chores: Chore[] = [];
   people: Person[] = [];
-  showResults = false;
+  showResults: boolean;
 
   newPersonName: string;
+
+  peopleSinceLastCheck: string;
+  choresSinceLastCheck: string;
+  showResultsSinceLastCheck: boolean;
 
   constructor() { }
 
   ngOnInit() {
     this.populatePeople();
     this.populateChores();
+    this.showResults = JSON.parse(localStorage.getItem("showResults"));
   }
 
-  ngOnChanges() {
-    console.log('changes called')
-    localStorage.removeItem("people");
-    localStorage.setItem("people", JSON.stringify(this.people));
-    localStorage.removeItem("chores");
-    localStorage.setItem("chores", JSON.stringify(this.chores));
-    localStorage.removeItem("showResults");
-    localStorage.setItem("showResults", JSON.stringify(this.showResults));
+  ngDoCheck() {
+    console.log('checked')
+    if (this.peopleSinceLastCheck != JSON.stringify(this.people)) {
+      localStorage.setItem("people", JSON.stringify(this.people));
+      this.peopleSinceLastCheck = JSON.stringify(this.people);
+      console.log('people changed')
+    }
+    if (this.choresSinceLastCheck != JSON.stringify(this.chores)) {
+      localStorage.setItem("chores", JSON.stringify(this.chores));
+      this.choresSinceLastCheck = JSON.stringify(this.chores);
+      console.log('chores changed')
+    }
+    if (this.showResultsSinceLastCheck != this.showResults) {
+      localStorage.setItem("showResults", JSON.stringify(this.showResults));
+      this.showResultsSinceLastCheck = this.showResults;
+      console.log('showResults changed')
+    }
   }
 
   populatePeople() {
-    this.people = [
-      {
-        id: 1,
-        name: 'Brett',
-        chores: [],
-        effortCompleted: 0
-      },
-      {
-        id: 2,
-        name: 'Kethryn',
-        chores: [],
-        effortCompleted: 0
-      }
-    ]
+    this.people = JSON.parse(localStorage.getItem("people"));
+    this.peopleSinceLastCheck = JSON.stringify(this.people);
   }
 
   populateChores() {
-    this.chores = [
-      {
-        id: 1,
-        title: 'Clean Bathroom',
-        effort: 5,
-        completed: false
-      },
-      {
-        id: 2,
-        title: 'Trash Duty',
-        effort: 2,
-        completed: false
-      },
-      {
-        id: 3,
-        title: 'Dish Duty',
-        effort: 3,
-        completed: false
-      },
-      {
-        id: 4,
-        title: 'Vacuum',
-        effort: 4,
-        completed: false
-      },
-      {
-        id: 5,
-        title: 'Make Bed',
-        effort: 3,
-        completed: false
-      },
-      {
-        id: 6,
-        title: 'Feed Cat',
-        effort: 3,
-        completed: false
-      },
-    ]
+    this.chores = JSON.parse(localStorage.getItem("chores"));
+    this.choresSinceLastCheck = JSON.stringify(this.chores);
   }
 
   resetForm(form: NgForm) {
@@ -99,7 +65,7 @@ export class ChoresComponent implements OnInit, OnChanges {
     let person: Person = 
     {
       name: form.value.PersonName,
-      id:  this.people.map(id => id.id).reduce((prev, next) => prev + next) + 1,
+      id:  this.people.length > 0 ? this.people.map(id => id.id).reduce((prev, next) => prev + next) + 1 : 1,
       chores: [],
       effortCompleted: 0
     }
@@ -117,7 +83,7 @@ export class ChoresComponent implements OnInit, OnChanges {
     let chore: Chore = 
     {
       title: form.value.ChoreName,
-      id:  this.chores.map(id => id.id).reduce((prev, next) => prev + next) + 1,
+      id:  this.chores.length > 0 ? this.chores.map(id => id.id).reduce((prev, next) => prev + next) + 1 : 1,
       completed: false,
       effort: form.value.Effort
     }
@@ -133,6 +99,7 @@ export class ChoresComponent implements OnInit, OnChanges {
   resetChores() {
     this.people.forEach(person => {
       person.chores.forEach(chore => {
+        chore.completed = false;
         this.chores.push(chore);
       })
       person.chores.splice(0, person.chores.length)
