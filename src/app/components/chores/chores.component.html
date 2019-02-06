@@ -36,7 +36,7 @@
       </div>
       <div class="col-md-2 btn-group">
         <button class="btn btn-warning" (click)="resetChores()" [disabled]="!showResults">Reset</button>
-        <button class="btn btn-success" (click)="randomlyAssignChores()" [disabled]="showResults || !chores.length > 0 || !people.length > 0">Randomize</button>
+        <button class="btn btn-success" (click)="randomlyAssignChores()" [disabled]="showResults || !(chores.length > 0) || !(people.length > 0)">Randomize</button>
       </div>
     </div>
 </div>
