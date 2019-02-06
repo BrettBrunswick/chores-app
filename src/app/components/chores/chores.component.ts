@@ -91,8 +91,11 @@ export class ChoresComponent implements OnInit, OnChanges {
     ]
   }
 
-  addPerson(form?: NgForm) {
-    console.log(form.value)
+  resetForm(form: NgForm) {
+    form.resetForm();
+  }
+
+  addPerson(form: NgForm) {
     let person: Person = 
     {
       name: form.value.PersonName,
@@ -100,13 +103,31 @@ export class ChoresComponent implements OnInit, OnChanges {
       chores: [],
       effortCompleted: 0
     }
-    console.log(person)
-    console.log(this.people)
     this.people.push(person);
   }
 
-  addChore() {
+  deletePerson(personId) {
+    let chore = this.people.filter(chr => chr.id == personId).pop();
+    let index = this.people.indexOf(chore);
+    this.people.splice(index, 1)
+  }
 
+  addChore(form: NgForm) {
+    console.log(form.value)
+    let chore: Chore = 
+    {
+      title: form.value.ChoreName,
+      id:  this.chores.map(id => id.id).reduce((prev, next) => prev + next) + 1,
+      completed: false,
+      effort: form.value.Effort
+    }
+    this.chores.push(chore);
+  }
+
+  deleteChore(choreId) {
+    let chore = this.chores.filter(chr => chr.id == choreId).pop();
+    let index = this.chores.indexOf(chore);
+    this.chores.splice(index, 1)
   }
 
   resetChores() {
@@ -131,7 +152,7 @@ export class ChoresComponent implements OnInit, OnChanges {
     this.showResults = true;
   }
 
-  clickedCheck(e, personId, choreId) {
+  clickedCompleted(e, personId, choreId) {
     let person = this.people.filter(pers => pers.id == personId).pop();
     let chore = person.chores.filter(chr => chr.id == choreId).pop();
 
@@ -205,7 +226,6 @@ export class ChoresComponent implements OnInit, OnChanges {
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-  
     return array;
   }
   
