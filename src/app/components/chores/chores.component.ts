@@ -25,35 +25,31 @@ export class ChoresComponent implements OnInit, DoCheck {
   ngOnInit() {
     this.populatePeople();
     this.populateChores();
-    this.showResults = JSON.parse(localStorage.getItem("showResults"));
+    this.showResults = JSON.parse(localStorage.getItem('showResults'));
   }
 
   ngDoCheck() {
-    console.log('checked')
     if (this.peopleSinceLastCheck != JSON.stringify(this.people)) {
-      localStorage.setItem("people", JSON.stringify(this.people));
+      localStorage.setItem('people', JSON.stringify(this.people));
       this.peopleSinceLastCheck = JSON.stringify(this.people);
-      console.log('people changed')
     }
     if (this.choresSinceLastCheck != JSON.stringify(this.chores)) {
-      localStorage.setItem("chores", JSON.stringify(this.chores));
+      localStorage.setItem('chores', JSON.stringify(this.chores));
       this.choresSinceLastCheck = JSON.stringify(this.chores);
-      console.log('chores changed')
     }
     if (this.showResultsSinceLastCheck != this.showResults) {
-      localStorage.setItem("showResults", JSON.stringify(this.showResults));
+      localStorage.setItem('showResults', JSON.stringify(this.showResults));
       this.showResultsSinceLastCheck = this.showResults;
-      console.log('showResults changed')
     }
   }
 
   populatePeople() {
-    this.people = JSON.parse(localStorage.getItem("people"));
+    this.people = JSON.parse(localStorage.getItem('people'));
     this.peopleSinceLastCheck = JSON.stringify(this.people);
   }
 
   populateChores() {
-    this.chores = JSON.parse(localStorage.getItem("chores"));
+    this.chores = JSON.parse(localStorage.getItem('chores'));
     this.choresSinceLastCheck = JSON.stringify(this.chores);
   }
 
@@ -79,7 +75,6 @@ export class ChoresComponent implements OnInit, DoCheck {
   }
 
   addChore(form: NgForm) {
-    console.log(form.value)
     let chore: Chore = 
     {
       title: form.value.ChoreName,
